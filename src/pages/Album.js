@@ -4,7 +4,6 @@ import Header from '../components/Header';
 import getMusics from '../services/musicsAPI';
 import MusicCard from '../components/MusicCard';
 import Loading from './Loading';
-import { getFavoriteSongs } from '../services/favoriteSongsAPI';
 
 class Album extends React.Component {
   constructor() {
@@ -21,13 +20,10 @@ class Album extends React.Component {
     this.setLoading = this.setLoading.bind(this);
     this.addFavoriteId = this.addFavoriteId.bind(this);
     this.verifyIfIsFavorite = this.verifyIfIsFavorite.bind(this);
-    this.fetchFavorites = this.fetchFavorites.bind(this);
-    this.removeFavoriteId = this.removeFavoriteId.bind(this);
   }
 
   componentDidMount() {
     this.fetchMusics();
-    this.fetchFavorites();
   }
 
   setLoading(value) {
@@ -45,14 +41,6 @@ class Album extends React.Component {
     this.setState({ musics: fetchedMusics, artistName, collectionName, loading: false });
   }
 
-  async fetchFavorites() {
-    const favoritesObjList = await getFavoriteSongs();
-    const favoritesIdList = favoritesObjList.map((favoriteSong) => favoriteSong.trackId);
-    this.setState(() => ({
-      favoritesIds: favoritesIdList,
-    }));
-  }
-
   addFavoriteId(newId) {
     const { favoritesIds } = this.state;
     const isRepeated = favoritesIds.find((id) => id === newId);
@@ -62,12 +50,6 @@ class Album extends React.Component {
         favoritesIds: [...previousState.favoritesIds, newId],
       }));
     }
-  }
-
-  removeFavoriteId(idToRemove) {
-    const { favoritesIds } = this.state;
-    const filteredFavoritesIds = favoritesIds.filter((id) => id !== idToRemove);
-    this.setState({ favoritesIds: filteredFavoritesIds });
   }
 
   verifyIfIsFavorite(id) {
@@ -96,7 +78,6 @@ class Album extends React.Component {
                     music={ music }
                     setLoading={ this.setLoading }
                     addFavoriteId={ this.addFavoriteId }
-                    removeFavoriteId={ this.removeFavoriteId }
                     isFavorite={ this.verifyIfIsFavorite(music.trackId) }
                   />))}
             </section>
